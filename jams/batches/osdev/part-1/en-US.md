@@ -2,13 +2,13 @@
 part: "part-1"
 batch: 'osdev'
 totalParts: 'total number of parts in the jam'
-title: 'your title'
-description: 'a quick description!'
-contributor: 'your GitHub username'
+title: 'Operating Systems Development'
+description: 'From 0 to an operating system.'
+contributor: 'packjackisback'
 contributorSlackID: 'your Slack ID'
 thumbnail: 'thumbnail image link'
 timeEstimate: ''
-difficulty: '(Beginner, Intermediate, Difficult)'
+difficulty: 'Difficult'
 keywords: 'a, list, of, keywords separated by comma space'
 presentation: 'link to figma slides'
 presentationPlay: 'link to figma slides in presentation mode'
@@ -28,34 +28,14 @@ This jam will break down the complicated and, arguably, difficult task of making
 
 
 ## Part 0 - Setting up the environment:
-This project is designed for completion on Linux, but setup instructions will be provided for Mac, Windows, and even web!
+This jam will work best on Linux, but you can definitely follow along on macOS, Windows, and even a web browser, albeit with some extra complications.
+
+First, before we start, we need to install a few tools. We'll explain what they do later, when we actually use them :D .
+
 <details>
 <summary>Linux Setup</summary>
 
 --- 
-
-We need to install:
-
-A **C/C++ compiler**: We will be using `gcc` here, but you could conceivably use `clang` if desired.
-
-
-**Basic utilities**: Provided through `binutils` 99% of the time, and usually preinstalled.  
-We need a set of low-level tools like:
-- `as` (assembler)  
-- `ld` (linker)  
-- `objcopy` (convert binaries)  
-- `objdump` (inspect binaries)
-
-Don't worry if you don't understand what these do yet, we will learn! These are needed for linking and creating kernel images.
-
-
-**Make**: A build automation tool that reads a Makefile and compiles what's necessary. 
-
-**Nasm**: Assembled for x86. This will allow us to use assembly, when we start from scratch :D.
-
-**Qemu**: Rebooting and running potentially buggy code repeatedly is a recipe for disaster, so we will be using `qemu`, an emulator/virtual machine.
-
-**xorriso**: This will be used much later, in order to package our code into an iso and run on a machine!
 
 If you have a fairly common distro, the necessary commands to install these should be below!
 
@@ -126,9 +106,7 @@ sudo apk add build-base nasm qemu xorriso
 <details>
 <summary>macOS setup</summary>
 
-MacOS doesn't tend to play nice for developing (Thanks Apple!), and this is especially true with osdev. This will be more difficult than on linux, which this guide is primarily created for.
-
-Most of the tools we need are not installed by default on macOS, but can be added easily with **Homebrew** or Xcode Command Line Tools.
+Quick warning - I am not familiar with macOS at all. You will probably encounter issues, and will have to learn to fix them on your own.
 
 ### Step 1: Install Homebrew
 Homebrew is the de-facto macOS package manager. If not installed already, navigate to the terminal and run:
@@ -150,8 +128,69 @@ brew install nasm qemu make
 xcode-select --install
 ```
 
-The first line is self explanatory, and installs these utilities, but the second line uses xcode to install clang and headers. While most examples will be using gcc, clang should be fully compatible for the scope of the project. 
+</details>
+
+<details>
+<summary>Windows Setup</summary>
+
+Windows requires a little extra setup to run OS development tools, since most of them are native to Linux. There are two main approaches: **WSL2** (recommended) or **MSYS2**.
+
+---
+
+### Option 1: WSL2 (Recommended)
+
+WSL2 gives you a real Linux environment inside Windows, so you can follow the **Linux instructions** almost directly.
+
+1. Install WSL2:
+   - Open PowerShell as Administrator and run:
+     ```powershell
+     wsl --install
+     ```
+   - Restart your computer if prompted.
+2. Choose a Linux distribution from the Microsoft Store (Ubuntu is easiest).  
+3. Open your Linux terminal and follow the **Linux setup commands** (Debian/Ubuntu instructions).  
+4. Run QEMU either inside WSL2 or on Windows directly:
+   - QEMU can run GUI VMs inside WSL2 with Windows 11/WSLg, or you can copy the kernel image to Windows and run it using Windows QEMU.
+
+---
+
+### Option 2: MSYS2 (Alternative)
+
+MSYS2 provides a Unix-like environment for Windows with a package manager. This is more manual than WSL2 but works.
+
+1. Install MSYS2 from [msys2.org](https://www.msys2.org/).  
+2. Update the system:
+```bash
+pacman -Syu
+```
+
+3. Install build tools:
+```bash
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils mingw-w64-x86_64-nasm make
+pacman -S mingw-w64-x86_64-qemu mingw-w64-x86_64-xorriso
+```
 
 </details>
 
 
+
+
+<details>
+<summary>Web Setup</summary>
+OS Development is not fun to use on web. If you absolutely must, though, it is possible, albeit awful to do.
+
+For the actual development and building, we will be using github codespaces. For the most part, following the debian instructions should work, but if not I recommend google/ asking around, because supporting this is really more effort than it is worth. 
+
+You will then have to build your code to an ISO to test, __every single time__. 
+
+To run said ISO, we will be using [copy.sh](https://copy.sh/v86).
+
+To load an ISO, scroll down to the CD-ROM section, click Browse, and select your ISO. Then, click start.
+
+This will in theory work on any device, but testing is of course necessary.
+
+
+</details>
+
+
+You should now have a properly setup development environment. Again, if you can, please use linux. This guide is designed with Linux in mind.
