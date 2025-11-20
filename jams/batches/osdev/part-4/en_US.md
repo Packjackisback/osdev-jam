@@ -35,13 +35,13 @@ When the BIOS loads the boot sector, it loads the first 512 bytes of the disk to
 
 Our CPU is in real mode right now though, so the addresses are specified by **segment:offset**.
 
-To understand segments and offsets, we need to think a little bit about how our jumping works from before. When we had `jmp loop`, the cpu jumped from its place in the file back up to the associated place. Just like our si on a string, the cpu holds a pointer walking along the addresses of the instructions, and through editing this we can move around the instructions. This pointer is known as `IP`, and this holds the offset from `CS` where the instruction is stored. `CS` holds the base address for the instructions, in this case, `0x0000`. There are similar segments for data `DS`, extra stuff `ES`, and the stack `SS`.
+To understand segments and offsets, we need to think a little bit about how our jumping works from before. When we had `jmp loop`, the cpu jumped from its place in the file back up to the associated address. Just like our `si` on a string, the cpu holds a pointer walking along the addresses of the instructions, and through editing this (like with `jmp`!) we can move around the instructions. This pointer is known as `IP`, and this holds the offset from `CS` where the instruction is stored. `CS` holds the base address for the instructions, in this case, `0x0000`. There are similar segments for data `DS`, extra stuff `ES`, and the stack `SS`.
 
 TODO: Make diagram. Reword.
 
 By default when we boot right now, `CS:IP` = `0x0000:0x7c00`, and `DS = ES = SS = 0x0000`
 
-This is hard to understand, but lets update our bootloader to be safer and setup for the next part.
+This is hard to understand, but lets just move on for now to update our bootloader to be safer and setup for the next part.
 
 ## Step 2 - A better bootloader
 
@@ -78,9 +78,14 @@ message: db "Hello world from Jackson", 0 ; don't forget to zero pad!
 times 510-($-$$) db 0 ; pad to 510 with 0s, leaving 2 spaces for below
 dw 0xaa55             ; end file with AA 55
 ```
+
+Now, instead of just printing the string, we are cleaning and setting everything up. We don't want `es`, `ds`, or `ss` to point to any random address, so we are setting ax to zero, and using it to clean each value. While we do this though, we don't want the cpu to try and do anything with these values, as they haven't been setup right, so we disable and reenable interrupts.
+
 Currently, the memory at 0x7C00 looks like this
 
 TODO make diagram
 
 I'm sure you are tired of using assembly, so in the next step we will make the jump to C!
+
+We learned a little bit about how sectors and offsets work here, but we will go into a lot more detail in the future.
 
